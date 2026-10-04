@@ -1,0 +1,42 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-admin/edit.php?post_type=product",
+	"login": true,
+	"constants": {
+		"WP_DEBUG": true,
+		"WP_DEBUG_LOG": true,
+		"WP_DEBUG_DISPLAY": false,
+		"SCRIPT_DEBUG": true
+	},
+	"steps": [
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "woocommerce"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "plugin-check"
+			},
+			"options": {
+				"activate": true
+			}
+		},
+		{
+			"step": "activatePlugin",
+			"pluginPath": "product-description-blocks/product-description-blocks.php"
+		},
+		{
+			"step": "writeFile",
+			"path": "/wordpress/wp-content/mu-plugins/pdblocks-dev.php",
+			"data": "<?php\n// Dev only: skips the WooCommerce setup wizard and exposes the plugin's seed and test scripts to a logged-in admin.\nadd_filter( 'woocommerce_enable_setup_wizard', '__return_false' );\nadd_filter( 'woocommerce_prevent_automatic_wizard_redirect', '__return_true' );\nforeach ( array( 'seed', 'run' ) as $pdblocks_dev_script ) {\n\tadd_action(\n\t\t'admin_post_pdblocks_' . $pdblocks_dev_script,\n\t\tfunction () use ( $pdblocks_dev_script ) {\n\t\t\tif ( ! current_user_can( 'manage_options' ) ) {\n\t\t\t\twp_die( 'Forbidden' );\n\t\t\t}\n\t\t\theader( 'Content-Type: text/plain; charset=utf-8' );\n\t\t\trequire WP_CONTENT_DIR . '/pdblocks-tests/' . $pdblocks_dev_script . '.php';\n\t\t\texit;\n\t\t}\n\t);\n}\n"
+		}
+	]
+}

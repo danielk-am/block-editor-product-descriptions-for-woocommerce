@@ -1,0 +1,150 @@
+/**
+ * Product description and short description block editors, on the classic product screen.
+ */
+
+/* The form field an editor writes to. It shows only when the editor is not running. */
+.pdblocks-field__content {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 13px;
+}
+
+/* wp-admin shows #excerpt by ID, so hiding the field takes an ID too. */
+#poststuff .pdblocks-field.is-ready .pdblocks-field__content,
+.pdblocks-field:not(.is-ready) .pdblocks-field__editor {
+	display: none;
+}
+
+.pdblocks__frame {
+	container-type: inline-size;
+	border: 1px solid #c3c4c7;
+	background: #fff;
+}
+
+/* Under a meta box header the frame sits flush, as the header already draws the edge. */
+#postdivrich.postbox .pdblocks__frame,
+#postexcerpt .inside:has(> .pdblocks-field) .pdblocks__frame {
+	border: 0;
+}
+
+#postexcerpt .inside:has(> .pdblocks-field) {
+	margin: 0;
+	padding: 0;
+}
+
+.pdblocks__toolbar {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-height: 48px;
+	padding: 0 8px;
+	border-bottom: 1px solid #e0e0e0;
+	background: #fff;
+}
+
+.pdblocks__block-toolbar {
+	flex: 1;
+	min-width: 0;
+	overflow-x: auto;
+}
+
+/* The block toolbar sits in the strip, so it drops its own frame. */
+.pdblocks__block-toolbar .block-editor-block-toolbar,
+.pdblocks__block-toolbar .components-toolbar-group,
+.pdblocks__block-toolbar .components-toolbar {
+	border: 0;
+	background: none;
+}
+
+.pdblocks__body {
+	display: flex;
+	align-items: stretch;
+}
+
+.pdblocks__canvas {
+	flex: 1;
+	min-width: 0;
+}
+
+.pdblocks__content.editor-styles-wrapper {
+	box-sizing: border-box;
+	min-height: 300px;
+	padding: 20px 24px 40px;
+	background: #fff;
+	color: #1e1e1e;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	font-size: 16px;
+	line-height: 1.6;
+}
+
+[data-pdblocks-field="excerpt"] .pdblocks__content.editor-styles-wrapper {
+	min-height: 160px;
+}
+
+/*
+ * The editors sit inside #poststuff, where wp-admin sizes and pads every heading as a meta box
+ * title. These put headings back to what the block editor draws.
+ */
+#poststuff .pdblocks__content :is(h1, h2, h3, h4, h5, h6) {
+	margin: 1.2em 0 0.5em;
+	padding: 0;
+	color: inherit;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+#poststuff .pdblocks__content h1 {
+	font-size: 2em;
+}
+
+#poststuff .pdblocks__content h2 {
+	font-size: 1.6em;
+}
+
+#poststuff .pdblocks__content h3 {
+	font-size: 1.3em;
+}
+
+#poststuff .pdblocks__content h4 {
+	font-size: 1.15em;
+}
+
+#poststuff .pdblocks__content h5 {
+	font-size: 1em;
+}
+
+#poststuff .pdblocks__content h6 {
+	font-size: 0.9em;
+}
+
+#poststuff .pdblocks__settings h2 {
+	margin: 0;
+	padding: 0;
+	font-size: 13px;
+	line-height: 1.4;
+}
+
+.pdblocks__settings {
+	flex: none;
+	width: 280px;
+	max-height: 640px;
+	overflow-y: auto;
+	border-left: 1px solid #e0e0e0;
+	background: #fff;
+}
+
+/* In a narrow box the block settings move below the canvas. */
+@container (max-width: 640px) {
+	.pdblocks__body {
+		flex-direction: column;
+	}
+
+	.pdblocks__settings {
+		width: auto;
+		max-height: none;
+		border-left: 0;
+		border-top: 1px solid #e0e0e0;
+	}
+}
