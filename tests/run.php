@@ -246,7 +246,7 @@ $pdblocks_group(
 		$short  = PDBlocks_Plugin::get_allowed_block_types( 'short_description' );
 		$check( 'Content blocks are offered for the description.', is_array( $blocks ) && in_array( 'core/paragraph', $blocks, true ) && in_array( 'core/table', $blocks, true ) && in_array( 'core/shortcode', $blocks, true ) );
 		$check( 'Blocks that need a full post editor are left out.', ! in_array( 'core/post-title', $blocks, true ) && ! in_array( 'core/query', $blocks, true ) && ! in_array( 'core/freeform', $blocks, true ) );
-		$check( 'The short description offers a shorter list.', is_array( $short ) && in_array( 'core/list', $short, true ) && ! in_array( 'core/table', $short, true ) && count( $short ) < count( $blocks ) );
+		$check( 'The short description offers text blocks only.', array( 'core/paragraph', 'core/heading', 'core/list', 'core/list-item', 'core/quote' ) === $short );
 
 		$only_short = static function ( $block_types, $field ) {
 			return 'short_description' === $field ? true : $block_types;
@@ -254,6 +254,74 @@ $pdblocks_group(
 		add_filter( 'pdblocks_allowed_block_types', $only_short, 10, 2 );
 		$check( 'A filter can change the blocks for one editor.', true === PDBlocks_Plugin::get_allowed_block_types( 'short_description' ) && is_array( PDBlocks_Plugin::get_allowed_block_types( 'description' ) ) );
 		remove_filter( 'pdblocks_allowed_block_types', $only_short, 10 );
+	}
+);
+
+$pdblocks_group(
+	'Google for WooCommerce',
+	static function ( callable $check ) use ( $pdblocks_product ): void {
+		$blocks   = "<!-- wp:paragraph -->\n<p>Soft &amp; light, cut for <em>every</em> day.</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:heading -->\n<h2 class=\"wp-block-heading\">Why you will like it</h2>\n<!-- /wp:heading -->\n\n<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Organic cotton</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Pre-washed</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list -->\n\n<!-- wp:table -->\n<figure class=\"wp-block-table\"><table><tbody><tr><td>Small</td><td>48 cm</td></tr><tr><td>Large</td><td>56 cm</td></tr></tbody></table></figure>\n<!-- /wp:table -->";
+		$expected = "Soft & light, cut for every day.\nWhy you will like it\n- Organic cotton\n- Pre-washed\nSmall | 48 cm\nLarge | 56 cm";
+		$filter   = 'woocommerce_gla_product_attribute_value_description';
+		$classic  = '<p>Classic <strong>HTML</strong></p><ul><li>One</li></ul>';
+
+		$check( 'Blocks become plain text, one line per paragraph, heading, list item and table row.', PDBlocks_Plugin::html_to_text( $blocks ) === $expected );
+		$check( 'A description with blocks is sent to Google as plain text.', apply_filters( $filter, $blocks, null ) === $expected );
+		$check( 'A description without blocks is left as Google for WooCommerce prepared it.', apply_filters( $filter, $classic, null ) === $classic );
+
+		$cut = mb_substr( $blocks, 0, mb_strpos( $blocks, 'Pre-washed' ) + 10 ) . "</li>\n<!-- /wp:li";
+		$check( 'Markup cut short by the 5,000 character limit leaves nothing behind.', "Soft & light, cut for every day.\nWhy you will like it\n- Organic cotton\n- Pre-washed" === apply_filters( $filter, $cut, null ) );
+
+		add_filter( 'pdblocks_google_description_as_text', '__return_true' );
+		$check( 'A filter sends every description as plain text.', "Classic HTML\n- One" === apply_filters( $filter, $classic, null ) );
+		remove_filter( 'pdblocks_google_description_as_text', '__return_true' );
+
+		add_filter( 'pdblocks_google_description_as_text', '__return_false' );
+		$check( 'A filter turns the conversion off.', apply_filters( $filter, $blocks, null ) === $blocks );
+		remove_filter( 'pdblocks_google_description_as_text', '__return_false' );
+
+		// The real thing, when Google for WooCommerce is in the plugins folder. It does not need to be active.
+		$autoload = WP_PLUGIN_DIR . '/google-listings-and-ads/vendor/autoload.php';
+		$adapter  = 'Automattic\\WooCommerce\\GoogleListingsAndAds\\Product\\WCProductAdapter';
+		if ( ! class_exists( $adapter ) && file_exists( $autoload ) ) {
+			require_once $autoload;
+		}
+		if ( ! class_exists( $adapter ) ) {
+			echo "SKIP  Google for WooCommerce is not installed, so its own description pipeline was not run.\n";
+			return;
+		}
+
+		$post    = $pdblocks_product( $blocks, '' );
+		$product = wc_get_product( $post->ID );
+		$product->set_regular_price( '20' );
+		$product->save();
+		$sync    = static function () use ( $adapter, $product ) {
+			return ( new $adapter(
+				array(
+					'wc_product'    => $product,
+					'targetCountry' => 'US',
+				)
+			) )->getDescription();
+		};
+
+		try {
+			$check( 'The fixture product holds the block description.', $product->get_description() === $blocks );
+
+			remove_filter( $filter, array( 'PDBlocks_Plugin', 'google_description_as_text' ), 10 );
+			$without = $sync();
+			add_filter( $filter, array( 'PDBlocks_Plugin', 'google_description_as_text' ), 10, 2 );
+			$with = $sync();
+
+			$check( 'Without the plugin, Google for WooCommerce would send the block markup.', false !== strpos( $without, '<!-- wp:paragraph -->' ) );
+			$check( 'With it, Google for WooCommerce sends the plain text.', $with === $expected );
+
+			if ( false === strpos( $without, '<!-- wp:paragraph -->' ) || $with !== $expected ) {
+				echo 'NOTE  Google for WooCommerce returned: ' . wp_json_encode( array( $without, $with ) ) . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Plain text response.
+			}
+		} finally {
+			add_filter( $filter, array( 'PDBlocks_Plugin', 'google_description_as_text' ), 10, 2 );
+			wp_delete_post( $post->ID, true );
+		}
 	}
 );
 

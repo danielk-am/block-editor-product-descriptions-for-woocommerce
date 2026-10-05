@@ -30,6 +30,16 @@
 			}
 		},
 		{
+			"step": "installPlugin",
+			"pluginData": {
+				"resource": "wordpress.org/plugins",
+				"slug": "google-listings-and-ads"
+			},
+			"options": {
+				"activate": false
+			}
+		},
+		{
 			"step": "activatePlugin",
 			"pluginPath": "product-description-blocks-for-woocommerce/product-description-blocks-for-woocommerce.php"
 		},

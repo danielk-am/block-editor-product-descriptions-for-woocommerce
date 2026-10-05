@@ -54,7 +54,8 @@ final class PDBlocks_Plugin {
 	);
 
 	/**
-	 * Blocks offered for the short description, which sits beside the price and add to cart button.
+	 * Blocks offered for the short description. It sits beside the price and the add to cart
+	 * button, so it keeps to text.
 	 */
 	const SHORT_DESCRIPTION_BLOCK_TYPES = array(
 		'core/paragraph',
@@ -62,12 +63,6 @@ final class PDBlocks_Plugin {
 		'core/list',
 		'core/list-item',
 		'core/quote',
-		'core/image',
-		'core/buttons',
-		'core/button',
-		'core/separator',
-		'core/html',
-		'core/shortcode',
 	);
 
 	/**
@@ -117,6 +112,7 @@ final class PDBlocks_Plugin {
 		add_filter( 'woocommerce_short_description', array( __CLASS__, 'render_short_description_blocks' ), 9 );
 		add_filter( 'get_the_excerpt', array( __CLASS__, 'render_excerpt_blocks' ), 9, 2 );
 		add_filter( 'render_block_core/post-excerpt', array( __CLASS__, 'render_post_excerpt_blocks' ), 10, 3 );
+		add_filter( 'woocommerce_gla_product_attribute_value_description', array( __CLASS__, 'google_description_as_text' ), 10, 2 );
 	}
 
 	/**
@@ -367,6 +363,64 @@ final class PDBlocks_Plugin {
 		);
 
 		return $count ? $formatted : $block_content;
+	}
+
+	/**
+	 * Send Google for WooCommerce plain text for a description written in blocks.
+	 *
+	 * Google for WooCommerce keeps HTML comments when it cleans a description, so block markup would
+	 * reach Google as part of it. Google defines the description as a string of up to 5,000 characters.
+	 *
+	 * @param string          $description Description prepared by Google for WooCommerce.
+	 * @param WC_Product|null $product     The product being synced.
+	 * @return string
+	 */
+	public static function google_description_as_text( $description, $product = null ) {
+		if ( ! is_string( $description ) ) {
+			return $description;
+		}
+
+		/**
+		 * Filters whether a description is sent to Google for WooCommerce as plain text.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param bool            $as_text     Whether to send plain text. True when the description has blocks.
+		 * @param string          $description Description prepared by Google for WooCommerce.
+		 * @param WC_Product|null $product     The product being synced.
+		 */
+		if ( ! apply_filters( 'pdblocks_google_description_as_text', has_blocks( $description ), $description, $product ) ) {
+			return $description;
+		}
+
+		return self::html_to_text( $description );
+	}
+
+	/**
+	 * Turn a description's HTML into plain text, one line per paragraph, heading, list item or table row.
+	 *
+	 * @param string $html HTML, with or without block markup.
+	 * @return string
+	 */
+	public static function html_to_text( $html ) {
+		// Comments carry the block markup. A length limit can cut the last comment or tag short.
+		$text = preg_replace( '/<!--.*?(?:-->|$)/s', '', (string) $html );
+		$text = preg_replace( '/<[^>]*$/', '', $text );
+
+		$text = preg_replace( '/<li\b[^>]*>/i', '- ', $text );
+		$text = preg_replace( '/<\/t[dh]>/i', ' | ', $text );
+		$text = preg_replace( '/<br\b[^>]*>|<\/(?:p|div|h[1-6]|li|tr|blockquote|figure|figcaption|pre|ul|ol|table|details|summary)>/i', "\n", $text );
+		$text = html_entity_decode( wp_strip_all_tags( $text ), ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+
+		$lines = array();
+		foreach ( preg_split( '/\R/u', $text ) as $line ) {
+			$line = trim( preg_replace( '/[\s\x{00A0}]+/u', ' ', $line ), " |" );
+			if ( '' !== $line ) {
+				$lines[] = $line;
+			}
+		}
+
+		return implode( "\n", $lines );
 	}
 
 	/**
