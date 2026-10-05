@@ -3,6 +3,8 @@
 /.gitignore
 /.distignore
 /build
+/design
+/.wordpress-org
 /tests
 /README.md
 *.zip

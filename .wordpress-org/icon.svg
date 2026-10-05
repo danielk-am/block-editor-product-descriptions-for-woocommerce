@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="pdblocks-icon-title">
+	<title id="pdblocks-icon-title">Product Description Blocks for WooCommerce</title>
+	<rect width="256" height="256" rx="52" fill="#2563EB"/>
+	<!-- The description box. -->
+	<rect x="42" y="46" width="172" height="164" rx="16" fill="#FFFFFF"/>
+	<!-- A heading and a paragraph. -->
+	<rect x="62" y="68" width="92" height="18" rx="5" fill="#153847"/>
+	<rect x="62" y="100" width="132" height="10" rx="5" fill="#BFD0FA"/>
+	<rect x="62" y="118" width="104" height="10" rx="5" fill="#BFD0FA"/>
+	<!-- The selected block. -->
+	<rect x="60" y="142" width="96" height="48" rx="8" fill="#EDF3FF" stroke="#2563EB" stroke-width="4"/>
+	<rect x="72" y="155" width="22" height="22" rx="4" fill="#2563EB"/>
+	<rect x="104" y="157" width="40" height="7" rx="3.5" fill="#8FADF5"/>
+	<rect x="104" y="169" width="28" height="7" rx="3.5" fill="#8FADF5"/>
+	<!-- The block inserter. -->
+	<rect x="162" y="158" width="68" height="68" rx="16" fill="#153847" stroke="#2563EB" stroke-width="8"/>
+	<path d="M196 176v32M180 192h32" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round"/>
+</svg>
