@@ -264,8 +264,8 @@ final class PDBlocks_Plugin {
 	}
 
 	/**
-	 * Render the blocks in a short description. WordPress does this for post content only, so
-	 * without it the block comments would reach wpautop() and leave empty paragraphs behind.
+	 * Render the blocks in a short description and keep wpautop() off the result, as WordPress
+	 * does for post content. WooCommerce renders the blocks too, but leaves wpautop() in place.
 	 *
 	 * @param string $short_description Short description being displayed.
 	 * @return string

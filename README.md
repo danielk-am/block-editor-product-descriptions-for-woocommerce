@@ -13,7 +13,7 @@ Activate the plugin and the two description boxes become block editors. You get 
 Each editor keeps its form field (`content`, `excerpt`) in sync as block markup. The product form posts those fields with everything else, so price, Featured, catalog visibility, the gallery and variations are saved by the same Update button as before.
 
 - **Existing descriptions are safe.** A description written in the classic editor is shown as blocks, and is only saved as blocks once you edit it.
-- **The short description renders on the storefront.** WooCommerce does not render blocks there by itself, so the plugin does. On a block theme, the product's own page keeps the formatting that the Post Excerpt block would otherwise flatten.
+- **The short description keeps its formatting.** On a block theme, the product's own page keeps the formatting that the Post Excerpt block would otherwise flatten.
 - **Google for WooCommerce gets plain text.** The plugin hands Google for WooCommerce every product description as text, without HTML or block markup.
 - **It stands aside when it should.** Product screens that already use the block editor, and users who turned off the visual editor, are left alone.
 
@@ -39,7 +39,7 @@ WordPress 7.0 or later, WooCommerce 11.1 or later, PHP 7.4 or later. Tested on W
 
 ## Install
 
-Build the plugin as shown below, zip `build/product-description-block-editor-for-woocommerce`, and upload it under Plugins > Add New > Upload Plugin. Or copy that folder into `wp-content/plugins`.
+Build the plugin as shown below, zip `build/product-description-block-editor-for-woocommerce`, and upload it under Plugins > Add Plugin > Upload Plugin. Or copy that folder into `wp-content/plugins`.
 
 ## Develop and test
 

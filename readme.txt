@@ -22,7 +22,7 @@ Nothing else about the product screen changes. Each editor writes to the same fo
 * Add blocks with the + button, or type / in an empty line.
 * Use the toolbar for undo, redo and the selected block's tools. The cog opens that block's settings.
 * Insert images from the Media Library, or upload new ones.
-* Write the short description in blocks too. The plugin renders those blocks on the storefront.
+* Write the short description in blocks too. On a block theme, the plugin keeps its formatting on the product page.
 
 = Descriptions you already have =
 
@@ -58,7 +58,7 @@ The source and tests are on [GitHub](https://github.com/danielk-am/product-descr
 
 == Installation ==
 
-1. In your WordPress admin, go to Plugins > Add New, search for "Product Description Block Editor for WooCommerce" and install it. Or upload the ZIP under Plugins > Add New > Upload Plugin.
+1. In your WordPress admin, go to Plugins > Add Plugin, search for "Product Description Block Editor for WooCommerce" and install it. Or upload the ZIP under Plugins > Add Plugin > Upload Plugin.
 2. Activate the plugin. WooCommerce needs to be active.
 3. Edit any product. The description and short description boxes are now block editors.
 
@@ -76,7 +76,7 @@ Not until you edit them. A description written in the classic editor is converte
 
 = Does the short description keep its formatting on the storefront? =
 
-On the product's own page, yes. WooCommerce does not render blocks in the short description by itself, so the plugin does. Block themes show the short description through the Post Excerpt block, which normally flattens it to plain text. On the product page the plugin keeps the formatting of a short description written in blocks. Anywhere a theme shows a trimmed excerpt, such as a product grid, it stays plain text.
+On the product's own page, yes. WooCommerce renders the blocks wherever its own short description template is used. Block themes show the short description through the Post Excerpt block, which normally flattens it to plain text. On the product page the plugin keeps the formatting of a short description written in blocks. Anywhere a theme shows a trimmed excerpt, such as a product grid, it stays plain text.
 
 = Can I use blocks from other plugins? =
 
@@ -96,7 +96,7 @@ Yes. Every product description is sent to Google as plain text, without HTML or 
 
 = What happens if I deactivate the plugin? =
 
-The classic editors come back. Descriptions saved as blocks keep their block markup, and WordPress keeps rendering blocks in the description. Short descriptions written in blocks rely on this plugin to render cleanly. Without it, WooCommerce treats the block markup as plain HTML, which may leave empty paragraphs.
+The classic editors come back. Descriptions and short descriptions saved as blocks keep their block markup, and WordPress and WooCommerce keep rendering it. On a block theme, the product page goes back to showing the short description as plain text.
 
 == Screenshots ==
 
