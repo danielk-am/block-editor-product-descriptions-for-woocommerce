@@ -221,7 +221,7 @@ final class PDBlocks_Plugin {
 		self::$editor_support_removed = true;
 		?>
 		<div id="postdivrich" class="postarea">
-			<?php self::render_field( 'content', get_post_field( 'post_content', $post->ID, 'raw' ), __( 'Product description', 'product-description-blocks' ) ); ?>
+			<?php self::render_field( 'content', get_post_field( 'post_content', $post->ID, 'raw' ), __( 'Product description', 'product-description-blocks-for-woocommerce' ) ); ?>
 		</div>
 		<?php
 	}
@@ -264,7 +264,7 @@ final class PDBlocks_Plugin {
 	 * @param WP_Post $post The product being edited.
 	 */
 	public static function render_short_description_editor( $post ) {
-		self::render_field( 'excerpt', get_post_field( 'post_excerpt', $post->ID, 'raw' ), __( 'Product short description', 'product-description-blocks' ) );
+		self::render_field( 'excerpt', get_post_field( 'post_excerpt', $post->ID, 'raw' ), __( 'Product short description', 'product-description-blocks-for-woocommerce' ) );
 	}
 
 	/**
@@ -399,7 +399,7 @@ final class PDBlocks_Plugin {
 			PDBLOCKS_VERSION,
 			true
 		);
-		wp_set_script_translations( 'pdblocks-editor', 'product-description-blocks' );
+		wp_set_script_translations( 'pdblocks-editor', 'product-description-blocks-for-woocommerce' );
 
 		$settings = get_block_editor_settings( array(), new WP_Block_Editor_Context( array( 'post' => $post ) ) );
 
@@ -412,11 +412,11 @@ final class PDBlocks_Plugin {
 				'fields'    => array(
 					'content' => array(
 						'allowedBlockTypes' => self::get_allowed_block_types( 'description' ),
-						'placeholder'       => __( 'Describe this product, or type / to choose a block', 'product-description-blocks' ),
+						'placeholder'       => __( 'Describe this product, or type / to choose a block', 'product-description-blocks-for-woocommerce' ),
 					),
 					'excerpt' => array(
 						'allowedBlockTypes' => self::get_allowed_block_types( 'short_description' ),
-						'placeholder'       => __( 'Sum this product up, or type / to choose a block', 'product-description-blocks' ),
+						'placeholder'       => __( 'Sum this product up, or type / to choose a block', 'product-description-blocks-for-woocommerce' ),
 					),
 				),
 			)

@@ -31,7 +31,7 @@
 		},
 		{
 			"step": "activatePlugin",
-			"pluginPath": "product-description-blocks/product-description-blocks.php"
+			"pluginPath": "product-description-blocks-for-woocommerce/product-description-blocks-for-woocommerce.php"
 		},
 		{
 			"step": "writeFile",

@@ -151,7 +151,7 @@
 								role: 'toolbar',
 								'aria-label': __(
 									'Editor tools',
-									'product-description-blocks'
+									'product-description-blocks-for-woocommerce'
 								),
 							},
 							el( Inserter, {
@@ -164,7 +164,7 @@
 										icon: 'plus-alt2',
 										label: __(
 											'Add block',
-											'product-description-blocks'
+											'product-description-blocks-for-woocommerce'
 										),
 										'aria-expanded': isOpen,
 										onClick: onToggle,
@@ -174,7 +174,7 @@
 							el( Button, {
 								size: 'compact',
 								icon: 'undo',
-								label: __( 'Undo', 'product-description-blocks' ),
+								label: __( 'Undo', 'product-description-blocks-for-woocommerce' ),
 								onClick: history.undo,
 								disabled: ! history.hasUndo,
 								accessibleWhenDisabled: true,
@@ -182,7 +182,7 @@
 							el( Button, {
 								size: 'compact',
 								icon: 'redo',
-								label: __( 'Redo', 'product-description-blocks' ),
+								label: __( 'Redo', 'product-description-blocks-for-woocommerce' ),
 								onClick: history.redo,
 								disabled: ! history.hasRedo,
 								accessibleWhenDisabled: true,
@@ -198,7 +198,7 @@
 								icon: 'admin-generic',
 								label: __(
 									'Block settings',
-									'product-description-blocks'
+									'product-description-blocks-for-woocommerce'
 								),
 								isPressed: showSettings,
 								onClick: () => setShowSettings( ! showSettings ),
@@ -239,7 +239,7 @@
 										role: 'region',
 										'aria-label': __(
 											'Block settings',
-											'product-description-blocks'
+											'product-description-blocks-for-woocommerce'
 										),
 									},
 									el( BlockInspector )
