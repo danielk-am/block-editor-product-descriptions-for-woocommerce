@@ -37,7 +37,7 @@ Blocks that need a full post editor, such as Post Title or Query Loop, are left 
 
 = Google for WooCommerce =
 
-Google for WooCommerce would otherwise send the block markup along with your description. For a description written in blocks, this plugin hands it plain text instead: one line per paragraph, heading, list item or table row. Descriptions without blocks are sent the way Google for WooCommerce prepares them.
+Google for WooCommerce sends each description with its HTML, and with its block markup when it was written in blocks. This plugin hands it plain text instead: one line per paragraph, heading, list item or table row. That applies to every product description, including those written in the classic editor.
 
 = Limits worth knowing =
 
@@ -51,7 +51,7 @@ Google for WooCommerce would otherwise send the block markup along with your des
 
 * `pdblocks_allowed_block_types` filters the blocks an editor offers. It receives the list and which editor it is for: `description` or `short_description`.
 * `pdblocks_format_post_excerpt_block` controls whether a short description written in blocks keeps its formatting in the Post Excerpt block on the product page. Return `false` to turn that off.
-* `pdblocks_google_description_as_text` decides whether a description is sent to Google for WooCommerce as plain text. It is true for descriptions with blocks. Return `true` to send every description as text, or `false` to turn the conversion off.
+* `pdblocks_google_description_as_text` decides whether a description is sent to Google for WooCommerce as plain text. It is true by default. Return `false` to leave descriptions as Google for WooCommerce prepares them.
 
 The source and tests are on [GitHub](https://github.com/danielk-am/product-description-blocks-for-woocommerce).
 
@@ -91,7 +91,7 @@ Then this plugin stands aside. It only acts on the classic product screen.
 
 = Does it work with Google for WooCommerce? =
 
-Yes. A description written in blocks is sent to Google as plain text, without the block markup. Google for WooCommerce applies its 5,000 character limit before the text is cleaned, so a very long description can end up shorter than the limit allows.
+Yes. Every product description is sent to Google as plain text, without HTML or block markup, whether it was written in blocks or in the classic editor. Google for WooCommerce applies its 5,000 character limit before the text is cleaned, so a very long description can end up shorter than the limit allows.
 
 = What happens if I deactivate the plugin? =
 

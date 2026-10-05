@@ -14,7 +14,7 @@ Each editor keeps its form field (`content`, `excerpt`) in sync as block markup.
 
 - **Existing descriptions are safe.** A description written in the classic editor is shown as blocks, and is only saved as blocks once you edit it.
 - **The short description renders on the storefront.** WooCommerce does not render blocks there by itself, so the plugin does. On a block theme, the product's own page keeps the formatting that the Post Excerpt block would otherwise flatten.
-- **Google for WooCommerce gets plain text.** For a description written in blocks, the plugin hands Google for WooCommerce text without the block markup.
+- **Google for WooCommerce gets plain text.** The plugin hands Google for WooCommerce every product description as text, without HTML or block markup.
 - **It stands aside when it should.** Product screens that already use the block editor, and users who turned off the visual editor, are left alone.
 
 There is no build step. The editor is one script that uses the `wp.*` packages WordPress ships: a `BlockEditorProvider` over a block list, with a fixed toolbar and the inserter as a popover.
@@ -31,7 +31,7 @@ There is no build step. The editor is one script that uses the `wp.*` packages W
 | --- | --- |
 | `pdblocks_allowed_block_types` | Blocks an editor offers. Receives the list and the editor (`description` or `short_description`). |
 | `pdblocks_format_post_excerpt_block` | Return `false` to let the Post Excerpt block show the short description as plain text on the product page. |
-| `pdblocks_google_description_as_text` | Whether a description goes to Google for WooCommerce as plain text. True for descriptions with blocks. Return `true` for every description, or `false` to turn it off. |
+| `pdblocks_google_description_as_text` | Whether a description goes to Google for WooCommerce as plain text. True by default. Return `false` to leave descriptions as Google for WooCommerce prepares them. |
 
 ## Requirements
 

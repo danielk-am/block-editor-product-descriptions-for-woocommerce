@@ -267,18 +267,22 @@ $pdblocks_group(
 
 		$check( 'Blocks become plain text, one line per paragraph, heading, list item and table row.', PDBlocks_Plugin::html_to_text( $blocks ) === $expected );
 		$check( 'A description with blocks is sent to Google as plain text.', apply_filters( $filter, $blocks, null ) === $expected );
-		$check( 'A description without blocks is left as Google for WooCommerce prepared it.', apply_filters( $filter, $classic, null ) === $classic );
+		$check( 'A description without blocks is sent to Google as plain text too.', "Classic HTML\n- One" === apply_filters( $filter, $classic, null ) );
+		$check( 'Text that was already plain is only tidied.', "Tom & Jerry\nSecond line" === apply_filters( $filter, "Tom &amp; Jerry\n\n\n  Second   line ", null ) );
 
 		$cut = mb_substr( $blocks, 0, mb_strpos( $blocks, 'Pre-washed' ) + 10 ) . "</li>\n<!-- /wp:li";
 		$check( 'Markup cut short by the 5,000 character limit leaves nothing behind.', "Soft & light, cut for every day.\nWhy you will like it\n- Organic cotton\n- Pre-washed" === apply_filters( $filter, $cut, null ) );
 
-		add_filter( 'pdblocks_google_description_as_text', '__return_true' );
-		$check( 'A filter sends every description as plain text.', "Classic HTML\n- One" === apply_filters( $filter, $classic, null ) );
-		remove_filter( 'pdblocks_google_description_as_text', '__return_true' );
-
 		add_filter( 'pdblocks_google_description_as_text', '__return_false' );
-		$check( 'A filter turns the conversion off.', apply_filters( $filter, $blocks, null ) === $blocks );
+		$check( 'A filter turns the conversion off.', apply_filters( $filter, $blocks, null ) === $blocks && apply_filters( $filter, $classic, null ) === $classic );
 		remove_filter( 'pdblocks_google_description_as_text', '__return_false' );
+
+		$blocks_only = static function ( $as_text, $description ) {
+			return has_blocks( $description );
+		};
+		add_filter( 'pdblocks_google_description_as_text', $blocks_only, 10, 2 );
+		$check( 'A filter can keep the conversion to descriptions with blocks.', apply_filters( $filter, $classic, null ) === $classic && apply_filters( $filter, $blocks, null ) === $expected );
+		remove_filter( 'pdblocks_google_description_as_text', $blocks_only, 10 );
 
 		// The real thing, when Google for WooCommerce is in the plugins folder. It does not need to be active.
 		$autoload = WP_PLUGIN_DIR . '/google-listings-and-ads/vendor/autoload.php';
@@ -295,7 +299,7 @@ $pdblocks_group(
 		$product = wc_get_product( $post->ID );
 		$product->set_regular_price( '20' );
 		$product->save();
-		$sync    = static function () use ( $adapter, $product ) {
+		$sync    = static function ( WC_Product $product ) use ( $adapter ) {
 			return ( new $adapter(
 				array(
 					'wc_product'    => $product,
@@ -308,9 +312,9 @@ $pdblocks_group(
 			$check( 'The fixture product holds the block description.', $product->get_description() === $blocks );
 
 			remove_filter( $filter, array( 'PDBlocks_Plugin', 'google_description_as_text' ), 10 );
-			$without = $sync();
+			$without = $sync( $product );
 			add_filter( $filter, array( 'PDBlocks_Plugin', 'google_description_as_text' ), 10, 2 );
-			$with = $sync();
+			$with = $sync( $product );
 
 			$check( 'Without the plugin, Google for WooCommerce would send the block markup.', false !== strpos( $without, '<!-- wp:paragraph -->' ) );
 			$check( 'With it, Google for WooCommerce sends the plain text.', $with === $expected );
@@ -318,6 +322,16 @@ $pdblocks_group(
 			if ( false === strpos( $without, '<!-- wp:paragraph -->' ) || $with !== $expected ) {
 				echo 'NOTE  Google for WooCommerce returned: ' . wp_json_encode( array( $without, $with ) ) . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Plain text response.
 			}
+
+			wp_update_post(
+				wp_slash(
+					array(
+						'ID'           => $post->ID,
+						'post_content' => $classic,
+					)
+				)
+			);
+			$check( 'A classic description goes through Google for WooCommerce as plain text.', "Classic HTML\n- One" === $sync( wc_get_product( $post->ID ) ) );
 		} finally {
 			add_filter( $filter, array( 'PDBlocks_Plugin', 'google_description_as_text' ), 10, 2 );
 			wp_delete_post( $post->ID, true );

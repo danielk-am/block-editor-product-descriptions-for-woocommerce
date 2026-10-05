@@ -366,10 +366,11 @@ final class PDBlocks_Plugin {
 	}
 
 	/**
-	 * Send Google for WooCommerce plain text for a description written in blocks.
+	 * Send Google for WooCommerce product descriptions as plain text.
 	 *
-	 * Google for WooCommerce keeps HTML comments when it cleans a description, so block markup would
-	 * reach Google as part of it. Google defines the description as a string of up to 5,000 characters.
+	 * Google defines the description as a string of up to 5,000 characters. Google for WooCommerce
+	 * keeps HTML tags and comments when it cleans a description, so the tags, and the block markup
+	 * of a description written in blocks, would reach Google as part of it.
 	 *
 	 * @param string          $description Description prepared by Google for WooCommerce.
 	 * @param WC_Product|null $product     The product being synced.
@@ -385,11 +386,11 @@ final class PDBlocks_Plugin {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param bool            $as_text     Whether to send plain text. True when the description has blocks.
+		 * @param bool            $as_text     Whether to send plain text. Default true.
 		 * @param string          $description Description prepared by Google for WooCommerce.
 		 * @param WC_Product|null $product     The product being synced.
 		 */
-		if ( ! apply_filters( 'pdblocks_google_description_as_text', has_blocks( $description ), $description, $product ) ) {
+		if ( ! apply_filters( 'pdblocks_google_description_as_text', true, $description, $product ) ) {
 			return $description;
 		}
 
