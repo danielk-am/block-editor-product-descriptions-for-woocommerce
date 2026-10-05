@@ -3,7 +3,7 @@
  * Synthetic catalogue for manual and browser checks on a disposable site.
  * Not shipped in the release ZIP.
  *
- * @package Product_Description_Blocks
+ * @package Product_Description_Block_Editor
  */
 
 defined( 'ABSPATH' ) || exit;

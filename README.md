@@ -1,6 +1,6 @@
-![Product Description Blocks for WooCommerce: write WooCommerce product descriptions with blocks, on the classic product screen.](.wordpress-org/banner-1544x500.png)
+![Product Description Block Editor for WooCommerce: write WooCommerce product descriptions with blocks, on the classic product screen.](.wordpress-org/banner-1544x500.png)
 
-# Product Description Blocks for WooCommerce
+# Product Description Block Editor for WooCommerce
 
 Write WooCommerce product descriptions and short descriptions with blocks, on the classic product screen.
 
@@ -39,20 +39,20 @@ WordPress 7.0 or later, WooCommerce 11.1 or later, PHP 7.4 or later. Tested on W
 
 ## Install
 
-Build the plugin as shown below, zip `build/product-description-blocks-for-woocommerce`, and upload it under Plugins > Add New > Upload Plugin. Or copy that folder into `wp-content/plugins`.
+Build the plugin as shown below, zip `build/product-description-block-editor-for-woocommerce`, and upload it under Plugins > Add New > Upload Plugin. Or copy that folder into `wp-content/plugins`.
 
 ## Develop and test
 
 Build the files that ship, without tests, design sources or repo files:
 
 ```bash
-rsync -a --delete --exclude-from=.distignore ./ build/product-description-blocks-for-woocommerce/
+rsync -a --delete --exclude-from=.distignore ./ build/product-description-block-editor-for-woocommerce/
 ```
 
 Start a disposable store with [WordPress Playground](https://wordpress.github.io/wordpress-playground/). It installs WooCommerce and Plugin Check, adds Google for WooCommerce for the feed checks, mounts the build and logs you in:
 
 ```bash
-npx @wp-playground/cli@3.1.56 server --port=9402 --workers=1 --login --blueprint=./tests/blueprint.json --mount=./build/product-description-blocks-for-woocommerce:/wordpress/wp-content/plugins/product-description-blocks-for-woocommerce --mount=./tests:/wordpress/wp-content/pdblocks-tests
+npx @wp-playground/cli@3.1.56 server --port=9402 --workers=1 --login --blueprint=./tests/blueprint.json --mount=./build/product-description-block-editor-for-woocommerce:/wordpress/wp-content/plugins/product-description-block-editor-for-woocommerce --mount=./tests:/wordpress/wp-content/pdblocks-tests
 ```
 
 Then, in the browser:

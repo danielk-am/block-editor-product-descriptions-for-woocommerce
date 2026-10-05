@@ -3,7 +3,7 @@
  * Plugin checks, run inside a WordPress admin request on a disposable site.
  * Plain assertions, so they run without the WordPress test suite. Not shipped in the release ZIP.
  *
- * @package Product_Description_Blocks
+ * @package Product_Description_Block_Editor
  */
 
 defined( 'ABSPATH' ) || exit;

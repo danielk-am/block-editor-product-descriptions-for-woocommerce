@@ -1,4 +1,4 @@
-=== Product Description Blocks for WooCommerce ===
+=== Product Description Block Editor for WooCommerce ===
 Contributors: danielkam1
 Donate link: https://danielk.am/tip/
 Tags: woocommerce, block editor, gutenberg, product description, short description
@@ -13,7 +13,7 @@ Write WooCommerce product descriptions and short descriptions with blocks, on th
 
 == Description ==
 
-Product Description Blocks turns the two description boxes on the WooCommerce product screen into block editors. You get headings, lists, images, tables, buttons and columns in your product copy, and the rest of the screen stays where it is.
+Product Description Block Editor turns the two description boxes on the WooCommerce product screen into block editors. You get headings, lists, images, tables, buttons and columns in your product copy, and the rest of the screen stays where it is.
 
 Nothing else about the product screen changes. Each editor writes to the same form field WooCommerce already saves, so price, Featured, catalog visibility, the gallery and variations are saved by the same Update button as before. The plugin does not touch Product data, the publish box or the meta boxes your extensions add.
 
@@ -54,11 +54,11 @@ Google for WooCommerce sends each description with its HTML, and with its block 
 * `pdblocks_format_post_excerpt_block` controls whether a short description written in blocks keeps its formatting in the Post Excerpt block on the product page. Return `false` to turn that off.
 * `pdblocks_google_description_as_text` decides whether a description is sent to Google for WooCommerce as plain text. It is true by default. Return `false` to leave descriptions as Google for WooCommerce prepares them.
 
-The source and tests are on [GitHub](https://github.com/danielk-am/product-description-blocks-for-woocommerce).
+The source and tests are on [GitHub](https://github.com/danielk-am/product-description-block-editor-for-woocommerce).
 
 == Installation ==
 
-1. In your WordPress admin, go to Plugins > Add New, search for "Product Description Blocks for WooCommerce" and install it. Or upload the ZIP under Plugins > Add New > Upload Plugin.
+1. In your WordPress admin, go to Plugins > Add New, search for "Product Description Block Editor for WooCommerce" and install it. Or upload the ZIP under Plugins > Add New > Upload Plugin.
 2. Activate the plugin. WooCommerce needs to be active.
 3. Edit any product. The description and short description boxes are now block editors.
 
