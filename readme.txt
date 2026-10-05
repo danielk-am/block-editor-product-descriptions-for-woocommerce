@@ -1,5 +1,6 @@
 === Product Description Blocks for WooCommerce ===
 Contributors: danielkam1
+Donate link: https://danielk.am/tip/
 Tags: woocommerce, block editor, gutenberg, product description, short description
 Requires at least: 7.0
 Tested up to: 7.1
