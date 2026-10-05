@@ -31,9 +31,13 @@ Opening a product does not change it. A description written in the classic edito
 
 The description offers Paragraph, Heading, List, Quote, Pullquote, Image, Gallery, Video, Audio, File, Media & Text, Cover, Embed, Table, Buttons, Columns, Group, Details, Separator, Spacer, Code, Preformatted, Verse, Custom HTML and Shortcode.
 
-The short description sits beside the price and the add to cart button, so it offers a shorter list: Paragraph, Heading, List, Quote, Image, Buttons, Separator, Custom HTML and Shortcode.
+The short description sits beside the price and the add to cart button, so it keeps to text: Paragraph, Heading, List and Quote.
 
 Blocks that need a full post editor, such as Post Title or Query Loop, are left out.
+
+= Google for WooCommerce =
+
+Google for WooCommerce would otherwise send the block markup along with your description. For a description written in blocks, this plugin hands it plain text instead: one line per paragraph, heading, list item or table row. Descriptions without blocks are sent the way Google for WooCommerce prepares them.
 
 = Limits worth knowing =
 
@@ -47,6 +51,7 @@ Blocks that need a full post editor, such as Post Title or Query Loop, are left 
 
 * `pdblocks_allowed_block_types` filters the blocks an editor offers. It receives the list and which editor it is for: `description` or `short_description`.
 * `pdblocks_format_post_excerpt_block` controls whether a short description written in blocks keeps its formatting in the Post Excerpt block on the product page. Return `false` to turn that off.
+* `pdblocks_google_description_as_text` decides whether a description is sent to Google for WooCommerce as plain text. It is true for descriptions with blocks. Return `true` to send every description as text, or `false` to turn the conversion off.
 
 The source and tests are on [GitHub](https://github.com/danielk-am/product-description-blocks-for-woocommerce).
 
@@ -84,9 +89,21 @@ No. Blocks are drawn with WordPress's default block styles inside the admin. The
 
 Then this plugin stands aside. It only acts on the classic product screen.
 
+= Does it work with Google for WooCommerce? =
+
+Yes. A description written in blocks is sent to Google as plain text, without the block markup. Google for WooCommerce applies its 5,000 character limit before the text is cleaned, so a very long description can end up shorter than the limit allows.
+
 = What happens if I deactivate the plugin? =
 
 The classic editors come back. Descriptions saved as blocks keep their block markup, and WordPress keeps rendering blocks in the description. Short descriptions written in blocks rely on this plugin to render cleanly. Without it, WooCommerce treats the block markup as plain HTML, which may leave empty paragraphs.
+
+== Screenshots ==
+
+1. The product description as a block editor, on the classic product screen.
+2. Add blocks from the inserter.
+3. A block's settings, open beside the description.
+4. The short description as a block editor, in its own box.
+5. The product page, with both descriptions rendered.
 
 == Changelog ==
 

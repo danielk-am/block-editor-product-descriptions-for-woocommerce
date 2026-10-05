@@ -15,30 +15,50 @@ if ( wc_get_product_id_by_sku( 'pdblocks-tee' ) ) {
 
 require_once ABSPATH . 'wp-admin/includes/image.php';
 
-$pdblocks_attachment = static function ( string $name, array $rgb ): int {
+$pdblocks_attachment = static function ( string $name, string $alt, array $rgb ): int {
 	$upload = wp_upload_dir();
 	$file   = trailingslashit( $upload['path'] ) . $name . '.png';
-	$image  = imagecreatetruecolor( 600, 600 );
-	imagefill( $image, 0, 0, imagecolorallocate( $image, $rgb[0], $rgb[1], $rgb[2] ) );
+	$size   = 1200;
+
+	// A T-shirt on a pale background, drawn at double size and scaled down for smooth edges.
+	$draft = imagecreatetruecolor( $size * 2, $size * 2 );
+	$paper = imagecolorallocate( $draft, 237, 243, 255 );
+	$shirt = array( 420, 230, 780, 230, 1010, 340, 940, 520, 830, 455, 830, 990, 370, 990, 370, 455, 260, 520, 190, 340 );
+	imagefill( $draft, 0, 0, $paper );
+	imagefilledpolygon(
+		$draft,
+		array_map(
+			static function ( $point ) {
+				return $point * 2;
+			},
+			$shirt
+		),
+		imagecolorallocate( $draft, $rgb[0], $rgb[1], $rgb[2] )
+	);
+	imagefilledellipse( $draft, 1200, 460, 440, 220, $paper );
+
+	$image = imagecreatetruecolor( $size, $size );
+	imagecopyresampled( $image, $draft, 0, 0, 0, 0, $size, $size, $size * 2, $size * 2 );
 	imagepng( $image, $file );
 
 	$id = wp_insert_attachment(
 		array(
-			'post_title'     => $name,
+			'post_title'     => $alt,
 			'post_mime_type' => 'image/png',
 			'post_status'    => 'inherit',
 		),
 		$file
 	);
 	wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $file ) );
+	update_post_meta( $id, '_wp_attachment_image_alt', $alt );
 
 	return $id;
 };
 
 $pdblocks_images = array(
-	$pdblocks_attachment( 'pdblocks-blue', array( 37, 99, 235 ) ),
-	$pdblocks_attachment( 'pdblocks-teal', array( 8, 126, 139 ) ),
-	$pdblocks_attachment( 'pdblocks-ink', array( 21, 56, 71 ) ),
+	$pdblocks_attachment( 'pdblocks-tee-blue', 'Blue T-shirt', array( 37, 99, 235 ) ),
+	$pdblocks_attachment( 'pdblocks-tee-teal', 'Teal T-shirt', array( 8, 126, 139 ) ),
+	$pdblocks_attachment( 'pdblocks-tee-ink', 'Dark T-shirt', array( 21, 56, 71 ) ),
 );
 
 // Written the way the classic editor stores text: no block markup.
