@@ -6,7 +6,7 @@
  * place. Each editor keeps its form field (`content`, `excerpt`) in sync as block markup, so both
  * are saved by the same form submission as the rest of the product.
  *
- * @package Product_Description_Block_Editor
+ * @package Block_Editor_Product_Descriptions
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -217,7 +217,7 @@ final class PDBlocks_Plugin {
 		self::$editor_support_removed = true;
 		?>
 		<div id="postdivrich" class="postarea">
-			<?php self::render_field( 'content', get_post_field( 'post_content', $post->ID, 'raw' ), __( 'Product description', 'product-description-block-editor-for-woocommerce' ) ); ?>
+			<?php self::render_field( 'content', get_post_field( 'post_content', $post->ID, 'raw' ), __( 'Product description', 'block-editor-product-descriptions-for-woocommerce' ) ); ?>
 		</div>
 		<?php
 	}
@@ -260,7 +260,7 @@ final class PDBlocks_Plugin {
 	 * @param WP_Post $post The product being edited.
 	 */
 	public static function render_short_description_editor( $post ) {
-		self::render_field( 'excerpt', get_post_field( 'post_excerpt', $post->ID, 'raw' ), __( 'Product short description', 'product-description-block-editor-for-woocommerce' ) );
+		self::render_field( 'excerpt', get_post_field( 'post_excerpt', $post->ID, 'raw' ), __( 'Product short description', 'block-editor-product-descriptions-for-woocommerce' ) );
 	}
 
 	/**
@@ -454,7 +454,7 @@ final class PDBlocks_Plugin {
 			PDBLOCKS_VERSION,
 			true
 		);
-		wp_set_script_translations( 'pdblocks-editor', 'product-description-block-editor-for-woocommerce' );
+		wp_set_script_translations( 'pdblocks-editor', 'block-editor-product-descriptions-for-woocommerce' );
 
 		$settings = get_block_editor_settings( array(), new WP_Block_Editor_Context( array( 'post' => $post ) ) );
 
@@ -467,11 +467,11 @@ final class PDBlocks_Plugin {
 				'fields'    => array(
 					'content' => array(
 						'allowedBlockTypes' => self::get_allowed_block_types( 'description' ),
-						'placeholder'       => __( 'Describe this product, or type / to choose a block', 'product-description-block-editor-for-woocommerce' ),
+						'placeholder'       => __( 'Describe this product, or type / to choose a block', 'block-editor-product-descriptions-for-woocommerce' ),
 					),
 					'excerpt' => array(
 						'allowedBlockTypes' => self::get_allowed_block_types( 'short_description' ),
-						'placeholder'       => __( 'Sum this product up, or type / to choose a block', 'product-description-block-editor-for-woocommerce' ),
+						'placeholder'       => __( 'Sum this product up, or type / to choose a block', 'block-editor-product-descriptions-for-woocommerce' ),
 					),
 				),
 			)

@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Product Description Block Editor for WooCommerce
- * Plugin URI: https://github.com/danielk-am/product-description-block-editor-for-woocommerce
- * Description: Write product descriptions and short descriptions with blocks on the classic product screen. Only those two boxes change: everything else saves the way it always has.
+ * Plugin Name: Block Editor Product Descriptions for WooCommerce
+ * Plugin URI: https://github.com/danielk-am/block-editor-product-descriptions-for-woocommerce
+ * Description: Enable the block editor (Gutenberg) for WooCommerce product descriptions and short descriptions, without switching the whole product screen.
  * Version: 1.0.0
  * Requires at least: 7.0
  * Requires PHP: 7.4
@@ -11,11 +11,11 @@
  * Author URI: https://danielk.am
  * License: GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: product-description-block-editor-for-woocommerce
+ * Text Domain: block-editor-product-descriptions-for-woocommerce
  * WC requires at least: 11.1
  * WC tested up to: 11.1
  *
- * @package Product_Description_Block_Editor
+ * @package Block_Editor_Product_Descriptions
  */
 
 defined( 'ABSPATH' ) || exit;

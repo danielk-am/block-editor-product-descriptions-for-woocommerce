@@ -41,7 +41,7 @@
 		},
 		{
 			"step": "activatePlugin",
-			"pluginPath": "product-description-block-editor-for-woocommerce/product-description-block-editor-for-woocommerce.php"
+			"pluginPath": "block-editor-product-descriptions-for-woocommerce/block-editor-product-descriptions-for-woocommerce.php"
 		},
 		{
 			"step": "writeFile",
