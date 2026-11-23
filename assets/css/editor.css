@@ -58,6 +58,23 @@
 	background: none;
 }
 
+/* Gutenberg's 24px divider between populated top-level block control groups. */
+.pdblocks__block-toolbar .block-editor-block-toolbar > :has(button) ~ :has(button) {
+	position: relative;
+}
+
+.pdblocks__block-toolbar .block-editor-block-toolbar > :has(button) ~ :has(button)::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	top: 50%;
+	width: 1px;
+	height: 24px;
+	transform: translateY(-50%);
+	background-color: #ddd;
+	pointer-events: none;
+}
+
 .pdblocks__body {
 	display: flex;
 	align-items: stretch;
@@ -88,7 +105,7 @@
  * title. These put headings back to what the block editor draws.
  */
 #poststuff .pdblocks__content :is(h1, h2, h3, h4, h5, h6) {
-	margin: 1.2em 0 0.5em;
+	margin-block: 1.2em 0.5em;
 	padding: 0;
 	color: inherit;
 	font-weight: 600;
@@ -146,5 +163,23 @@
 		max-height: none;
 		border-left: 0;
 		border-top: 1px solid #e0e0e0;
+	}
+}
+
+.pdblocks__outline {
+	box-sizing: border-box;
+	flex: 0 1 230px;
+	min-width: 0;
+	max-height: 420px;
+	overflow: auto;
+	border-inline-end: 1px solid #e0e0e0;
+}
+
+@container (max-width: 640px) {
+	.pdblocks__outline {
+		flex: none;
+		max-height: 180px;
+		border-inline-end: 0;
+		border-bottom: 1px solid #e0e0e0;
 	}
 }

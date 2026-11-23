@@ -105,6 +105,7 @@ final class PDBlocks_Plugin {
 	public static function init() {
 		add_action( 'before_woocommerce_init', array( __CLASS__, 'declare_compatibility' ) );
 		add_filter( 'wp_editor_expand', array( __CLASS__, 'skip_editor_expand' ), 10, 2 );
+		add_action( 'load-post.php', array( __CLASS__, 'watch_classic_save' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
 		add_action( 'edit_form_after_title', array( __CLASS__, 'render_editor' ) );
 		add_action( 'edit_form_after_editor', array( __CLASS__, 'restore_editor_support' ) );
@@ -113,6 +114,41 @@ final class PDBlocks_Plugin {
 		add_filter( 'get_the_excerpt', array( __CLASS__, 'render_excerpt_blocks' ), 9, 2 );
 		add_filter( 'render_block_core/post-excerpt', array( __CLASS__, 'render_post_excerpt_blocks' ), 10, 3 );
 		add_filter( 'woocommerce_gla_product_attribute_value_description', array( __CLASS__, 'google_description_as_text' ), 10, 2 );
+	}
+
+	/**
+	 * Preserve exact stored line endings on a classic edit form submission. WordPress
+	 * checks the form nonce and edit capability before it applies wp_insert_post_data.
+	 */
+	public static function watch_classic_save() {
+		if ( 'editpost' !== filter_input( INPUT_POST, 'action' ) || ! self::can_use_blocks() ) {
+			return;
+		}
+		add_filter( 'wp_insert_post_data', array( __CLASS__, 'preserve_line_endings' ), 10, 2 );
+	}
+
+	/**
+	 * HTML forms send CRLF for every textarea newline. Restore the original bytes only
+	 * when the sanitized submission matches the browser encoding of the stored field.
+	 *
+	 * @param array $data    Slashed, sanitized database fields.
+	 * @param array $postarr Slashed post array.
+	 * @return array
+	 */
+	public static function preserve_line_endings( $data, $postarr ) {
+		$id = (int) filter_input( INPUT_POST, 'post_ID', FILTER_VALIDATE_INT );
+		if ( ! $id || $id !== (int) ( $postarr['ID'] ?? 0 ) || 'product' !== $data['post_type'] ) {
+			return $data;
+		}
+
+		foreach ( array( 'post_content', 'post_excerpt' ) as $key ) {
+			$stored = wp_slash( get_post_field( $key, $id, 'raw' ) );
+			if ( $data[ $key ] !== $stored && $data[ $key ] === preg_replace( '/\r\n|\r|\n/', "\r\n", $stored ) ) {
+				$data[ $key ] = $stored;
+			}
+		}
+
+		return $data;
 	}
 
 	/**
@@ -217,7 +253,7 @@ final class PDBlocks_Plugin {
 		self::$editor_support_removed = true;
 		?>
 		<div id="postdivrich" class="postarea">
-			<?php self::render_field( 'content', get_post_field( 'post_content', $post->ID, 'raw' ), __( 'Product description', 'block-editor-product-descriptions-for-woocommerce' ) ); ?>
+			<?php self::render_field( 'content', get_post_field( 'post_content', $post->ID, 'raw' ), __( 'Product description', 'alkamy-product-descriptions-for-woocommerce' ) ); ?>
 		</div>
 		<?php
 	}
@@ -260,7 +296,7 @@ final class PDBlocks_Plugin {
 	 * @param WP_Post $post The product being edited.
 	 */
 	public static function render_short_description_editor( $post ) {
-		self::render_field( 'excerpt', get_post_field( 'post_excerpt', $post->ID, 'raw' ), __( 'Product short description', 'block-editor-product-descriptions-for-woocommerce' ) );
+		self::render_field( 'excerpt', get_post_field( 'post_excerpt', $post->ID, 'raw' ), __( 'Product short description', 'alkamy-product-descriptions-for-woocommerce' ) );
 	}
 
 	/**
@@ -331,7 +367,7 @@ final class PDBlocks_Plugin {
 	public static function render_post_excerpt_blocks( $block_content, $block, $instance ) {
 		$post_id = (int) ( $instance->context['postId'] ?? 0 );
 
-		if ( ! $post_id || ! is_singular( 'product' ) || get_queried_object_id() !== $post_id ) {
+		if ( ! $post_id || ! is_singular( 'product' ) || get_queried_object_id() !== $post_id || post_password_required( $post_id ) ) {
 			return $block_content;
 		}
 
@@ -454,7 +490,7 @@ final class PDBlocks_Plugin {
 			PDBLOCKS_VERSION,
 			true
 		);
-		wp_set_script_translations( 'pdblocks-editor', 'block-editor-product-descriptions-for-woocommerce' );
+		wp_set_script_translations( 'pdblocks-editor', 'alkamy-product-descriptions-for-woocommerce' );
 
 		$settings = get_block_editor_settings( array(), new WP_Block_Editor_Context( array( 'post' => $post ) ) );
 
@@ -467,11 +503,11 @@ final class PDBlocks_Plugin {
 				'fields'    => array(
 					'content' => array(
 						'allowedBlockTypes' => self::get_allowed_block_types( 'description' ),
-						'placeholder'       => __( 'Describe this product, or type / to choose a block', 'block-editor-product-descriptions-for-woocommerce' ),
+						'placeholder'       => __( 'Describe this product, or type / to choose a block', 'alkamy-product-descriptions-for-woocommerce' ),
 					),
 					'excerpt' => array(
 						'allowedBlockTypes' => self::get_allowed_block_types( 'short_description' ),
-						'placeholder'       => __( 'Sum this product up, or type / to choose a block', 'block-editor-product-descriptions-for-woocommerce' ),
+						'placeholder'       => __( 'Sum this product up, or type / to choose a block', 'alkamy-product-descriptions-for-woocommerce' ),
 					),
 				),
 			)

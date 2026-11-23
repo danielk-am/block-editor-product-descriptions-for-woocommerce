@@ -41,7 +41,7 @@
 		},
 		{
 			"step": "activatePlugin",
-			"pluginPath": "block-editor-product-descriptions-for-woocommerce/block-editor-product-descriptions-for-woocommerce.php"
+			"pluginPath": "alkamy-product-descriptions-for-woocommerce/alkamy-product-descriptions-for-woocommerce.php"
 		},
 		{
 			"step": "writeFile",
