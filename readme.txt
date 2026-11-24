@@ -1,11 +1,11 @@
-=== Block Editor Product Descriptions for WooCommerce ===
-Contributors: danielkam1
+=== Alkamy Block Editor Product Descriptions for WooCommerce ===
+Contributors: alkamy, danielkam1
 Donate link: https://danielk.am/tip/
 Tags: woocommerce, block editor, gutenberg, product description, short description
 Requires at least: 7.0
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,7 +60,7 @@ The source and tests are on [GitHub](https://github.com/danielk-am/block-editor-
 
 == Installation ==
 
-1. In your WordPress admin, go to Plugins > Add Plugin, search for "Block Editor Product Descriptions for WooCommerce" and install it. Or upload the ZIP under Plugins > Add Plugin > Upload Plugin.
+1. In your WordPress admin, go to Plugins > Add Plugin, search for "Alkamy Block Editor Product Descriptions for WooCommerce" and install it. Or upload the ZIP under Plugins > Add Plugin > Upload Plugin.
 2. Activate the plugin. WooCommerce needs to be active.
 3. Edit any product. The description and short description boxes are now block editors.
 
@@ -109,6 +109,33 @@ The classic editors come back. Descriptions and short descriptions saved as bloc
 5. The product page, with both descriptions rendered.
 
 == Changelog ==
+
+= 1.1.4 =
+* Add Gutenberg-style vertical dividers between the selected block’s toolbar groups.
+
+= 1.1.3 =
+* Undo an inserted block in one click when its editor sends duplicate content updates.
+
+= 1.1.2 =
+* Match Gutenberg’s toolbar order and use its block inserter and settings sidebar icons.
+
+= 1.1.1 =
+* Use Gutenberg’s List View, Undo and Redo toolbar icons.
+
+= 1.1.0 =
+* Open List View in the toolbar to select nested blocks. Headings now keep the horizontal margins supplied by the editor layout.
+
+= 1.0.3 =
+* Preserve stored line endings when saving an untouched description from the classic form.
+* Preserve the WordPress protected excerpt when a product requires a password.
+* Keep the original textarea available if a block editor fails to start, and initialize the other description independently.
+
+= 1.0.2 =
+* Matched the plugin folder, main filename and all PHP and JavaScript translation domains to the assigned WordPress.org slug.
+
+= 1.0.1 =
+* Renamed to Alkamy Block Editor Product Descriptions for WooCommerce.
+* Updated the directory banner and documentation with the Alkamy name.
 
 = 1.0.0 =
 * First release.

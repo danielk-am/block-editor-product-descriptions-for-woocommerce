@@ -10,7 +10,21 @@
  */
 ( function ( wp, settings ) {
 	const el = wp.element.createElement;
-	const { Component, createRoot, useEffect, useState } = wp.element;
+
+	// SVG paths from the Gutenberg @wordpress/icons package bundled in WordPress 7.1.
+	const toolbarIcon = ( path, attributes = {} ) => el(
+		'svg',
+		{ xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 24 24', fill: 'currentColor', 'aria-hidden': true, focusable: false },
+		el( 'path', { d: path, ...attributes } )
+	);
+	const inserterIcon = toolbarIcon( 'M11 12.5V17.5H12.5V12.5H17.5V11H12.5V6H11V11H6V12.5H11Z' );
+	const leftSidebarIcon = toolbarIcon( 'M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM8.5 18.5H6c-.3 0-.5-.2-.5-.5V6c0-.3.2-.5.5-.5h2.5v13zm10-.5c0 .3-.2.5-.5.5h-8v-13h8c.3 0 .5.2.5.5v12z', { fillRule: 'evenodd', clipRule: 'evenodd' } );
+	const rightSidebarIcon = toolbarIcon( 'M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-4 14.5H6c-.3 0-.5-.2-.5-.5V6c0-.3.2-.5.5-.5h8v13zm4.5-.5c0 .3-.2.5-.5.5h-2.5v-13H18c.3 0 .5.2.5.5v12z', { fillRule: 'evenodd', clipRule: 'evenodd' } );
+	const listViewIcon = toolbarIcon( 'M3 6h11v1.5H3V6Zm3.5 5.5h11V13h-11v-1.5ZM21 17H10v1.5h11V17Z' );
+	const undoIcon = toolbarIcon( 'M18.3 11.7c-.6-.6-1.4-.9-2.3-.9H6.7l2.9-3.3-1.1-1-4.5 5L8.5 16l1-1-2.7-2.7H16c.5 0 .9.2 1.3.5 1 1 1 3.4 1 4.5v.3h1.5v-.2c0-1.5 0-4.3-1.5-5.7z' );
+	const redoIcon = toolbarIcon( 'M15.6 6.5l-1.1 1 2.9 3.3H8c-.9 0-1.7.3-2.3.9-1.4 1.5-1.4 4.2-1.4 5.6v.2h1.5v-.3c0-1.1 0-3.5 1-4.5.3-.3.7-.5 1.3-.5h9.2L14.5 15l1.1 1.1 4.6-4.6-4.6-5z' );
+
+	const { Component, createRoot, useEffect, useRef, useState } = wp.element;
 	const { __ } = wp.i18n;
 	const {
 		BlockEditorKeyboardShortcuts,
@@ -37,6 +51,7 @@
 	const { isKeyboardEvent } = wp.keycodes;
 	const { MediaUpload, uploadMedia } = wp.mediaUtils;
 
+	const ListView = wp.blockEditor.ListView || wp.blockEditor.__experimentalListView;
 	const fields = document.querySelectorAll( '.pdblocks-field' );
 
 	if ( ! fields.length ) {
@@ -80,14 +95,35 @@
 			? ''
 			: serialize( blocks );
 
+	// Keep distinct block instances, including moves of blocks with identical markup.
+	const sameBlockTree = ( previous, next ) =>
+		previous.length === next.length && previous.every( ( block, index ) =>
+			block === next[ index ] || (
+				block.clientId === next[ index ].clientId &&
+				sameBlockTree( block.innerBlocks, next[ index ].innerBlocks )
+			)
+		);
+
 	const FieldEditor = ( { field, initialBlocks, editorSettings } ) => {
 		const history = useStateWithHistory( initialBlocks );
-		const [ showSettings, setShowSettings ] = useState( false );
+		const [ panel, setPanel ] = useState( null );
 		const [ stored ] = useState( () => ( {
 			content: field.value,
 			asBlocks: toContent( initialBlocks ),
 		} ) );
 		const blocks = history.value;
+		const latest = useRef( blocks );
+		latest.current = blocks;
+
+		const recordBlocks = ( next, staged ) => {
+			const previous = latest.current;
+			// Initializing a newly inserted block can send a second, equivalent commit.
+			if ( ! staged && sameBlockTree( previous, next ) && serialize( previous ) === serialize( next ) ) {
+				return;
+			}
+			latest.current = next;
+			history.setValue( next, staged );
+		};
 
 		useEffect( () => {
 			const content = toContent( blocks );
@@ -135,9 +171,9 @@
 					{
 						value: blocks,
 						onInput: ( nextBlocks ) =>
-							history.setValue( nextBlocks, true ),
+							recordBlocks( nextBlocks, true ),
 						onChange: ( nextBlocks ) =>
-							history.setValue( nextBlocks, false ),
+							recordBlocks( nextBlocks, false ),
 						settings: editorSettings,
 					},
 					el( BlockEditorKeyboardShortcuts.Register ),
@@ -151,7 +187,7 @@
 								role: 'toolbar',
 								'aria-label': __(
 									'Editor tools',
-									'block-editor-product-descriptions-for-woocommerce'
+									'alkamy-product-descriptions-for-woocommerce'
 								),
 							},
 							el( Inserter, {
@@ -161,10 +197,10 @@
 										className: 'pdblocks__inserter-toggle',
 										variant: 'primary',
 										size: 'compact',
-										icon: 'plus-alt2',
+										icon: inserterIcon,
 										label: __(
 											'Add block',
-											'block-editor-product-descriptions-for-woocommerce'
+											'alkamy-product-descriptions-for-woocommerce'
 										),
 										'aria-expanded': isOpen,
 										onClick: onToggle,
@@ -173,19 +209,26 @@
 							} ),
 							el( Button, {
 								size: 'compact',
-								icon: 'undo',
-								label: __( 'Undo', 'block-editor-product-descriptions-for-woocommerce' ),
+								icon: wp.i18n.isRTL() ? redoIcon : undoIcon,
+								label: __( 'Undo', 'alkamy-product-descriptions-for-woocommerce' ),
 								onClick: history.undo,
 								disabled: ! history.hasUndo,
 								accessibleWhenDisabled: true,
 							} ),
 							el( Button, {
 								size: 'compact',
-								icon: 'redo',
-								label: __( 'Redo', 'block-editor-product-descriptions-for-woocommerce' ),
+								icon: wp.i18n.isRTL() ? undoIcon : redoIcon,
+								label: __( 'Redo', 'alkamy-product-descriptions-for-woocommerce' ),
 								onClick: history.redo,
 								disabled: ! history.hasRedo,
 								accessibleWhenDisabled: true,
+							} ),
+							ListView && el( Button, {
+								icon: listViewIcon,
+								label: __( 'List View', 'alkamy-product-descriptions-for-woocommerce' ),
+								isPressed: panel === 'list',
+								'aria-expanded': panel === 'list',
+								onClick: () => setPanel( panel === 'list' ? null : 'list' ),
 							} ),
 							el(
 								'div',
@@ -195,18 +238,24 @@
 							el( Button, {
 								className: 'pdblocks__settings-toggle',
 								size: 'compact',
-								icon: 'admin-generic',
+								icon: wp.i18n.isRTL() ? leftSidebarIcon : rightSidebarIcon,
 								label: __(
 									'Block settings',
-									'block-editor-product-descriptions-for-woocommerce'
+									'alkamy-product-descriptions-for-woocommerce'
 								),
-								isPressed: showSettings,
-								onClick: () => setShowSettings( ! showSettings ),
+								isPressed: panel === 'settings',
+								'aria-expanded': panel === 'settings',
+								onClick: () => setPanel( panel === 'settings' ? null : 'settings' ),
 							} )
 						),
 						el(
 							'div',
 							{ className: 'pdblocks__body' },
+						panel === 'list' && el(
+							'div',
+							{ className: 'pdblocks__outline', role: 'region', 'aria-label': __( 'List View', 'alkamy-product-descriptions-for-woocommerce' ) },
+							el( ListView, { isExpanded: true } )
+						),
 							el(
 								'div',
 								{ className: 'pdblocks__canvas' },
@@ -231,7 +280,7 @@
 									)
 								)
 							),
-							showSettings &&
+							panel === 'settings' &&
 								el(
 									'div',
 									{
@@ -239,7 +288,7 @@
 										role: 'region',
 										'aria-label': __(
 											'Block settings',
-											'block-editor-product-descriptions-for-woocommerce'
+											'alkamy-product-descriptions-for-woocommerce'
 										),
 									},
 									el( BlockInspector )
@@ -260,6 +309,12 @@
 
 		static getDerivedStateFromError() {
 			return { failed: true };
+		}
+
+		componentDidMount() {
+			if ( ! this.state.failed ) {
+				this.props.wrapper.classList.add( 'is-ready' );
+			}
 		}
 
 		componentDidCatch() {
@@ -341,17 +396,19 @@
 			event.stopPropagation();
 		} );
 
-		wrapper.classList.add( 'is-ready' );
-		createRoot( mountNode ).render(
-			el(
-				Boundary,
-				{ wrapper },
-				el( FieldEditor, {
-					field,
-					initialBlocks: toBlocks( field.value ),
-					editorSettings,
-				} )
-			)
-		);
+		// Parsing can fail before React mounts its error boundary. Keep the raw textarea
+		// visible and let the other field start independently in that case.
+		try {
+			const initialBlocks = toBlocks( field.value );
+			createRoot( mountNode ).render(
+				el(
+					Boundary,
+					{ wrapper },
+					el( FieldEditor, { field, initialBlocks, editorSettings } )
+				)
+			);
+		} catch {
+			return;
+		}
 	} );
 } )( window.wp, pdblocksSettings );

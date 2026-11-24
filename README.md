@@ -39,20 +39,22 @@ WordPress 7.0 or later, WooCommerce 11.1 or later, PHP 7.4 or later. Tested on W
 
 ## Install
 
-Build the plugin as shown below, zip `build/block-editor-product-descriptions-for-woocommerce`, and upload it under Plugins > Add Plugin > Upload Plugin. Or copy that folder into `wp-content/plugins`.
+Build the plugin as shown below, zip `build/alkamy-product-descriptions-for-woocommerce`, and upload it under Plugins > Add Plugin > Upload Plugin. Or copy that folder into `wp-content/plugins`.
 
 ## Develop and test
 
 Build the files that ship, without tests, design sources or repo files:
 
 ```bash
-rsync -a --delete --exclude-from=.distignore ./ build/block-editor-product-descriptions-for-woocommerce/
+mkdir -p build/alkamy-product-descriptions-for-woocommerce
+rsync -a --delete --exclude-from=.distignore ./ build/alkamy-product-descriptions-for-woocommerce/
+mv build/alkamy-product-descriptions-for-woocommerce/block-editor-product-descriptions-for-woocommerce.php build/alkamy-product-descriptions-for-woocommerce/alkamy-product-descriptions-for-woocommerce.php
 ```
 
 Start a disposable store with [WordPress Playground](https://wordpress.github.io/wordpress-playground/). It installs WooCommerce and Plugin Check, adds Google for WooCommerce for the feed checks, mounts the build and logs you in:
 
 ```bash
-npx @wp-playground/cli@3.1.56 server --port=9402 --workers=1 --login --blueprint=./tests/blueprint.json --mount=./build/block-editor-product-descriptions-for-woocommerce:/wordpress/wp-content/plugins/block-editor-product-descriptions-for-woocommerce --mount=./tests:/wordpress/wp-content/pdblocks-tests
+npx @wp-playground/cli@3.1.56 server --port=9402 --workers=1 --login --blueprint=./tests/blueprint.json --mount=./build/alkamy-product-descriptions-for-woocommerce:/wordpress/wp-content/plugins/alkamy-product-descriptions-for-woocommerce --mount=./tests:/wordpress/wp-content/pdblocks-tests
 ```
 
 Then, in the browser:

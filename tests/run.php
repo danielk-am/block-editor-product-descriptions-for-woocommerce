@@ -199,6 +199,13 @@ $pdblocks_group(
 			$html = $template( $post->ID );
 			$check( 'On the product page, a block theme shows the short description with its formatting.', 1 === preg_match( '#<div class="wp-block-post-excerpt__excerpt">.*<li[^>]*>One</li>.*</div>#s', $html ) && false === strpos( $html, '<!-- wp:' ) );
 
+			add_filter( 'post_password_required', '__return_true' );
+			try {
+				$check( 'Protected products retain the WordPress protected excerpt.', false !== strpos( $template( $post->ID ), get_the_excerpt( $post ) ) );
+			} finally {
+				remove_filter( 'post_password_required', '__return_true' );
+			}
+
 			add_filter( 'pdblocks_format_post_excerpt_block', '__return_false' );
 			$check( 'A filter turns that off.', false === strpos( $template( $post->ID ), '<li' ) );
 			remove_filter( 'pdblocks_format_post_excerpt_block', '__return_false' );
